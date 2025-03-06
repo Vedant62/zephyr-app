@@ -18,8 +18,13 @@ class _DashboardPageState extends State<DashboardPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
-        title: const Text('Zephyr'),
+        automaticallyImplyLeading: false,
+        title: Row(
+          children: [
+            Image.asset('assets/zephyr.jpg', scale: 3,),
+            const Text('ephyr'),
+          ],
+        ),
       ),
       body: Column(
         children: [

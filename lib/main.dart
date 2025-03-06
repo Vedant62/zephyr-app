@@ -1,7 +1,14 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:zephyr/borrow_screen.dart';
+import 'package:zephyr/collateral_screen.dart';
+import 'package:zephyr/collateral_selection_screen.dart';
+import 'package:zephyr/credit_Score_screen.dart';
+import 'package:zephyr/dashboard_screen.dart';
 import 'package:zephyr/home.dart';
+import 'package:zephyr/loan_confirmation_screen.dart';
+import 'package:zephyr/repay_screen.dart';
 
 void main(){
   runApp(const MyApp());
@@ -16,7 +23,7 @@ class MyApp extends StatelessWidget {
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
       debugShowCheckedModeBanner: false,
-      home: HomePage(),
+      home: DashboardScreen()
     );
   }
 }

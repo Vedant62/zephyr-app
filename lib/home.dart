@@ -17,16 +17,23 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
-        title: const Text('Zephyr'),
+        title: Row(
+          children: [
+            Image.asset(
+              'assets/zephyr.jpg',
+              scale: 3,
+            ),
+            const Text('ephyr'),
+          ],
+        ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
+      body:  Padding(
+        padding:  const EdgeInsets.all(8.0),
         child: SingleChildScrollView(
           child: Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20.0),
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 20.0),
                 child: LoginCard(),
               ),
             ],
