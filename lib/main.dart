@@ -8,6 +8,7 @@ import 'package:zephyr/credit_Score_screen.dart';
 import 'package:zephyr/dashboard_screen.dart';
 import 'package:zephyr/home.dart';
 import 'package:zephyr/loan_confirmation_screen.dart';
+import 'package:zephyr/navigation_screen.dart';
 import 'package:zephyr/repay_screen.dart';
 
 void main(){
@@ -23,7 +24,7 @@ class MyApp extends StatelessWidget {
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
       debugShowCheckedModeBanner: false,
-      home: DashboardScreen()
+      home: AppNavigator()
     );
   }
 }
