@@ -1,10 +1,20 @@
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'collateral_selection_screen.dart';
 import 'dart:math' as math;
 
 class BorrowScreen extends StatefulWidget {
-  const BorrowScreen({Key? key}) : super(key: key);
+  const BorrowScreen({
+    super.key,
+    required this.getInterestRate,
+    required this.createLoan
+
+  });
+
+  final Future<double> Function() getInterestRate;
+
+  final Function(double amount, double collateralValue) createLoan;
 
   @override
   State<BorrowScreen> createState() => _BorrowScreenState();
@@ -64,6 +74,10 @@ class _BorrowScreenState extends State<BorrowScreen> {
                   FilledButton(
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
+                        Map<String, dynamic> loanInfo = {
+                          'amount': _amountController.text,
+                          'interestRate': widget.getInterestRate(),
+                        };
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -71,13 +85,14 @@ class _BorrowScreenState extends State<BorrowScreen> {
                               amount: double.parse(_amountController.text),
                               durationMonths: _durationMonths,
                               interestRate: _interestRate,
+                              createLoan: widget.createLoan
                             ),
                           ),
                         );
                       }
                     },
                     style: FilledButton.styleFrom(
-                      minimumSize: const Size(double.infinity, 56),
+                      minimumSize: const ui.Size(double.infinity, 56),
                     ),
                     child: const Text('Continue to Collateral'),
                   ),
@@ -230,7 +245,8 @@ class _BorrowScreenState extends State<BorrowScreen> {
   Widget _buildLoanSummary(BuildContext context) {
     final theme = Theme.of(context);
     final amount = double.tryParse(_amountController.text) ?? 0;
-    final monthlyPayment = _calculateMonthlyPayment(amount, _interestRate, _durationMonths);
+    final monthlyPayment =
+        _calculateMonthlyPayment(amount, _interestRate, _durationMonths);
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -251,13 +267,16 @@ class _BorrowScreenState extends State<BorrowScreen> {
           const SizedBox(height: 16),
           _buildSummaryRow('Loan Amount', '\$${amount.toStringAsFixed(2)}'),
           const SizedBox(height: 8),
-          _buildSummaryRow('Interest Rate', '${_interestRate.toStringAsFixed(2)}%'),
+          _buildSummaryRow(
+              'Interest Rate', '${_interestRate.toStringAsFixed(2)}%'),
           const SizedBox(height: 8),
           _buildSummaryRow('Loan Duration', '$_durationMonths months'),
           const SizedBox(height: 8),
-          _buildSummaryRow('Estimated Monthly Payment', '\$${monthlyPayment.toStringAsFixed(2)}'),
+          _buildSummaryRow('Estimated Monthly Payment',
+              '\$${monthlyPayment.toStringAsFixed(2)}'),
           const SizedBox(height: 8),
-          _buildSummaryRow('Total Repayment', '\$${(monthlyPayment * _durationMonths).toStringAsFixed(2)}'),
+          _buildSummaryRow('Total Repayment',
+              '\$${(monthlyPayment * _durationMonths).toStringAsFixed(2)}'),
         ],
       ),
     );
@@ -311,7 +330,8 @@ class _BorrowScreenState extends State<BorrowScreen> {
         _buildFeatureItem(
           icon: Icons.bar_chart,
           title: 'Credit Score Impact',
-          description: 'Improve your on-chain credit score with timely repayments',
+          description:
+              'Improve your on-chain credit score with timely repayments',
         ),
         _buildFeatureItem(
           icon: Icons.payments_outlined,
@@ -371,11 +391,14 @@ class _BorrowScreenState extends State<BorrowScreen> {
     );
   }
 
-  double _calculateMonthlyPayment(double principal, double interestRate, int durationMonths) {
+  double _calculateMonthlyPayment(
+      double principal, double interestRate, int durationMonths) {
     if (principal <= 0 || durationMonths <= 0) return 0;
 
     final monthlyRate = interestRate / 100 / 12;
-    return principal * monthlyRate * math.pow(1 + monthlyRate, durationMonths) /
+    return principal *
+        monthlyRate *
+        math.pow(1 + monthlyRate, durationMonths) /
         (math.pow(1 + monthlyRate, durationMonths) - 1);
   }
 }

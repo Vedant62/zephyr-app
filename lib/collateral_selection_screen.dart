@@ -8,15 +8,19 @@ class CollateralSelectionScreen extends StatefulWidget {
   final int durationMonths;
   final double interestRate;
 
-  const CollateralSelectionScreen({
-    Key? key,
-    required this.amount,
-    required this.durationMonths,
-    required this.interestRate,
-  }) : super(key: key);
+  final Function(double amount, double collateral) createLoan;
+
+
+  const CollateralSelectionScreen(
+      {super.key,
+      required this.amount,
+      required this.durationMonths,
+      required this.interestRate,
+      required this.createLoan});
 
   @override
-  State<CollateralSelectionScreen> createState() => _CollateralSelectionScreenState();
+  State<CollateralSelectionScreen> createState() =>
+      _CollateralSelectionScreenState();
 }
 
 class _CollateralSelectionScreenState extends State<CollateralSelectionScreen> {
@@ -124,7 +128,8 @@ class _CollateralSelectionScreenState extends State<CollateralSelectionScreen> {
                         ),
                       ),
                       const SizedBox(height: 24),
-                      _buildCollateralProgress(context, currentCollateralValue, minCollateralValue, healthFactor),
+                      _buildCollateralProgress(context, currentCollateralValue,
+                          minCollateralValue, healthFactor),
                       const SizedBox(height: 24),
                       if (_selectedCollaterals.isNotEmpty) ...[
                         Text(
@@ -134,7 +139,8 @@ class _CollateralSelectionScreenState extends State<CollateralSelectionScreen> {
                           ),
                         ),
                         const SizedBox(height: 8),
-                        ..._selectedCollaterals.map((selected) => _buildSelectedCollateralItem(context, selected)),
+                        ..._selectedCollaterals.map((selected) =>
+                            _buildSelectedCollateralItem(context, selected)),
                         const SizedBox(height: 24),
                       ],
                       Text(
@@ -144,20 +150,23 @@ class _CollateralSelectionScreenState extends State<CollateralSelectionScreen> {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      ..._availableCollaterals.map((collateral) => _buildCollateralItem(context, collateral)),
+                      ..._availableCollaterals.map((collateral) =>
+                          _buildCollateralItem(context, collateral)),
                     ],
                   ),
                 ),
               ),
             ),
-            _buildBottomBar(context, currentCollateralValue, minCollateralValue),
+            _buildBottomBar(
+                context, currentCollateralValue, minCollateralValue),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildCollateralProgress(BuildContext context, double currentValue, double minValue, double healthFactor) {
+  Widget _buildCollateralProgress(BuildContext context, double currentValue,
+      double minValue, double healthFactor) {
     final theme = Theme.of(context);
     final progressPercentage = math.min(1.0, currentValue / minValue);
     final healthColor = _getHealthFactorColor(healthFactor);
@@ -251,9 +260,11 @@ class _CollateralSelectionScreenState extends State<CollateralSelectionScreen> {
     );
   }
 
-  Widget _buildCollateralItem(BuildContext context, CollateralOption collateral) {
+  Widget _buildCollateralItem(
+      BuildContext context, CollateralOption collateral) {
     final theme = Theme.of(context);
-    final isSelected = _selectedCollaterals.any((selected) => selected.option.type == collateral.type);
+    final isSelected = _selectedCollaterals
+        .any((selected) => selected.option.type == collateral.type);
 
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
@@ -286,18 +297,19 @@ class _CollateralSelectionScreenState extends State<CollateralSelectionScreen> {
         trailing: isSelected
             ? const Icon(Icons.check_circle, color: Colors.green)
             : TextButton(
-          onPressed: () => _showAddCollateralDialog(collateral),
-          child: const Text('Add'),
-          style: TextButton.styleFrom(
-            visualDensity: VisualDensity.compact,
-          ),
-        ),
+                onPressed: () => _showAddCollateralDialog(collateral),
+                child: const Text('Add'),
+                style: TextButton.styleFrom(
+                  visualDensity: VisualDensity.compact,
+                ),
+              ),
         onTap: () => _showAddCollateralDialog(collateral),
       ),
     );
   }
 
-  Widget _buildSelectedCollateralItem(BuildContext context, SelectedCollateral selected) {
+  Widget _buildSelectedCollateralItem(
+      BuildContext context, SelectedCollateral selected) {
     final theme = Theme.of(context);
     final collateral = selected.option;
     final value = selected.amount * collateral.price;
@@ -335,7 +347,8 @@ class _CollateralSelectionScreenState extends State<CollateralSelectionScreen> {
           icon: const Icon(Icons.delete_outline, color: Colors.red),
           onPressed: () {
             setState(() {
-              _selectedCollaterals.removeWhere((item) => item.option.type == collateral.type);
+              _selectedCollaterals
+                  .removeWhere((item) => item.option.type == collateral.type);
             });
           },
         ),
@@ -344,7 +357,8 @@ class _CollateralSelectionScreenState extends State<CollateralSelectionScreen> {
     );
   }
 
-  Widget _buildBottomBar(BuildContext context, double currentValue, double minValue) {
+  Widget _buildBottomBar(
+      BuildContext context, double currentValue, double minValue) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -360,26 +374,29 @@ class _CollateralSelectionScreenState extends State<CollateralSelectionScreen> {
       child: FilledButton(
         onPressed: currentValue >= minValue
             ? () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => LoanConfirmationScreen(
-                amount: widget.amount,
-                durationMonths: widget.durationMonths,
-                interestRate: widget.interestRate,
-                collaterals: _selectedCollaterals
-                    .map((selected) => Collateral(
-                  type: selected.option.type,
-                  amount: selected.amount,
-                  initialValue: selected.amount * selected.option.price,
-                  currentValue: selected.amount * selected.option.price,
-                  liquidationThreshold: selected.option.liquidationThreshold,
-                ))
-                    .toList(),
-              ),
-            ),
-          );
-        }
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => LoanConfirmationScreen(
+                      amount: widget.amount,
+                      durationMonths: widget.durationMonths,
+                      interestRate: widget.interestRate,
+                      collaterals: _selectedCollaterals
+                          .map((selected) => Collateral(
+                                type: selected.option.type,
+                                amount: selected.amount,
+                                initialValue:
+                                    selected.amount * selected.option.price,
+                                currentValue:
+                                    selected.amount * selected.option.price,
+                                liquidationThreshold:
+                                    selected.option.liquidationThreshold,
+                              ))
+                          .toList(),
+                    ),
+                  ),
+                );
+              }
             : null,
         style: FilledButton.styleFrom(
           minimumSize: const Size(double.infinity, 56),
@@ -394,8 +411,10 @@ class _CollateralSelectionScreenState extends State<CollateralSelectionScreen> {
   }
 
   void _showAddCollateralDialog(CollateralOption collateral) {
-    final existingIndex = _selectedCollaterals.indexWhere((item) => item.option.type == collateral.type);
-    double initialAmount = existingIndex != -1 ? _selectedCollaterals[existingIndex].amount : 0;
+    final existingIndex = _selectedCollaterals
+        .indexWhere((item) => item.option.type == collateral.type);
+    double initialAmount =
+        existingIndex != -1 ? _selectedCollaterals[existingIndex].amount : 0;
     double amount = initialAmount;
 
     showDialog(
@@ -443,7 +462,8 @@ class _CollateralSelectionScreenState extends State<CollateralSelectionScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text('0'),
-                    Text('${maxAmount.toStringAsFixed(4)} ${collateral.symbol}'),
+                    Text(
+                        '${maxAmount.toStringAsFixed(4)} ${collateral.symbol}'),
                   ],
                 ),
               ],
@@ -456,25 +476,26 @@ class _CollateralSelectionScreenState extends State<CollateralSelectionScreen> {
               FilledButton(
                 onPressed: amount > 0
                     ? () {
-                  this.setState(() {
-                    if (existingIndex != -1) {
-                      if (amount == 0) {
-                        _selectedCollaterals.removeAt(existingIndex);
-                      } else {
-                        _selectedCollaterals[existingIndex] = SelectedCollateral(
-                          option: collateral,
-                          amount: amount,
-                        );
+                        this.setState(() {
+                          if (existingIndex != -1) {
+                            if (amount == 0) {
+                              _selectedCollaterals.removeAt(existingIndex);
+                            } else {
+                              _selectedCollaterals[existingIndex] =
+                                  SelectedCollateral(
+                                option: collateral,
+                                amount: amount,
+                              );
+                            }
+                          } else {
+                            _selectedCollaterals.add(SelectedCollateral(
+                              option: collateral,
+                              amount: amount,
+                            ));
+                          }
+                        });
+                        Navigator.pop(context);
                       }
-                    } else {
-                      _selectedCollaterals.add(SelectedCollateral(
-                        option: collateral,
-                        amount: amount,
-                      ));
-                    }
-                  });
-                  Navigator.pop(context);
-                }
                     : null,
                 child: Text(existingIndex != -1 ? 'Update' : 'Add'),
               ),

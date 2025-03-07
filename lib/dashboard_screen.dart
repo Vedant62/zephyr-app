@@ -6,7 +6,7 @@ import 'components/collateral_card.dart';
 import 'components/loan_card.dart';
 
 class DashboardScreen extends StatelessWidget {
-  const DashboardScreen({Key? key}) : super(key: key);
+  const DashboardScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +63,7 @@ class DashboardScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('DeFi Lending'),
+        title: const Text('Zephyr - Dashboard'),
         backgroundColor: Colors.transparent,
         elevation: 0,
         actions: [
